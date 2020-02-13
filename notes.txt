@@ -1,0 +1,6 @@
+https://stackoverflow.com/questions/52173037/pyspark-create-dictionary-from-data-in-two-columns
+https://stackoverflow.com/questions/50321549/map-values-in-a-dataframe-from-a-dictionary-using-pyspark
+
+Testing out spark, it seems to not work very well (slow).
+
+Use pure pandas/numpy instead. See `notebooks/plan_pandas_save_pajek.ipynb`
