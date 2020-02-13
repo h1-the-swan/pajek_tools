@@ -27,7 +27,7 @@ class PajekWriter:
 
     """Take a network as an edgelist and output a Pajek (.net) file"""
 
-    def __init__(self, edgelist, weighted=False, vertices_label='Vertices', edges_label=None, directed=True, citing_colname='ID', cited_colname='cited_ID'):
+    def __init__(self, edgelist, weighted=False, vertices_label='Vertices', edges_label=None, directed=True, citing_colname='ID', cited_colname='cited_ID', weight_colname='weight'):
         """
         
         Parameters
@@ -36,7 +36,7 @@ class PajekWriter:
             Should have a column for citing node name and cited node name. 
             Optional column for weight.
         weighted : `bool`, optional
-            Is this a weighted network?
+            Is this a network with weighted edges?
         vertices_label : `str`, default: "Vertices"
             label to use for the vertices
         edges_label : `str`, optional
@@ -45,9 +45,11 @@ class PajekWriter:
         directed : `bool`, default: True
             Is this a directed network?
         citing_colname : `str`, default: "ID"
-            Column label for the citing node name (default: "ID")
+            Column label for the citing node name
         cited_colname : `str`, default: "cited_ID"
-            Column label for the cited node name (default: "cited_ID")
+            Column label for the cited node name
+        weight_colname : `str`, default: "weight"
+            Column label for the edge weight, if this is a weighted network
 
         """
         self.df_edgelist = edgelist
@@ -63,6 +65,7 @@ class PajekWriter:
                 self.edges_label = "Edges"
         self.citing_colname = citing_colname
         self.cited_colname = cited_colname
+        self.weight_colname = weight_colname
 
         self.df_vertices = None
         self.id_map = None
@@ -156,7 +159,10 @@ class PajekWriter:
             edges_out = self.df_edgelist
             edges_out['citing_id'] = edges_out[self.citing_colname].map(self.id_map)
             edges_out['cited_id'] = edges_out[self.cited_colname].map(self.id_map)
-            edges_out[['citing_id', 'cited_id']].to_csv(outfile, sep=' ', index=False, header=False)
+            outcols = ['citing_id', 'cited_id']
+            if self.weighted:
+                outcols.append(self.weight_colname)
+            edges_out[outcols].to_csv(outfile, sep=' ', index=False, header=False)
 
         
 
