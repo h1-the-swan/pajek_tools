@@ -13,11 +13,13 @@ except ImportError:
         return "{:.2f} seconds".format(seconds)
 
 import logging
-logging.basicConfig(format='%(asctime)s %(name)s.%(lineno)d %(levelname)s : %(message)s',
-        datefmt="%H:%M:%S",
-        level=logging.INFO)
+# logging.basicConfig(format='%(asctime)s %(name)s.%(lineno)d %(levelname)s : %(message)s',
+#         datefmt="%H:%M:%S",
+#         level=logging.INFO)
 # logger = logging.getLogger(__name__)
-logger = logging.getLogger('__main__').getChild(__name__)
+# logger = logging.getLogger('__main__').getChild(__name__)
+logger = logging.getLogger(__name__)
+# logger.addHandler(logging.NullHandler())
 
 import pandas as pd
 import numpy as np
@@ -67,6 +69,9 @@ class PajekWriter:
         self.cited_colname = cited_colname
         self.weight_colname = weight_colname
 
+        self.df_edgelist[citing_colname] = self.df_edgelist[citing_colname].astype(str)
+        self.df_edgelist[cited_colname] = self.df_edgelist[cited_colname].astype(str)
+
         self.df_vertices = None
         self.id_map = None
 
@@ -109,10 +114,12 @@ class PajekWriter:
         Pandas dataframe
 
         """
+        logger.debug("getting vertices dataframe...")
         x = np.concatenate((self.df_edgelist[self.citing_colname], self.df_edgelist[self.cited_colname]), axis=0)
         x = np.unique(x)
         df_vertices = pd.DataFrame(x, columns=['node_name'])
         df_vertices['node_id'] = range(1, len(df_vertices)+1)
+        df_vertices['node_name'] = df_vertices['node_name'].astype(str)
         self.df_vertices = df_vertices
         return self.df_vertices
 
@@ -129,6 +136,7 @@ class PajekWriter:
         Pandas Series
 
         """
+        logger.debug("getting ID map...")
         self.id_map = df_vertices.set_index('node_name')['node_id']
         return self.id_map
 
@@ -145,24 +153,24 @@ class PajekWriter:
             if not self.df_vertices:
                 self.df_vertices = self.get_df_vertices()
             self.id_map = self.get_id_map(self.df_vertices)
+        self.df_edgelist['citing_id'] = self.df_edgelist[self.citing_colname].map(self.id_map)
+        self.df_edgelist['cited_id'] = self.df_edgelist[self.cited_colname].map(self.id_map)
         outfpath = Path(outf)
         quotechar = '"'
-        with open(outfpath, 'w') as outfile:
+        logger.debug("opening output file: {}".format(outfpath))
+        with open(outfpath, 'w', newline='\n') as outfile:
+            logger.debug("writing {} vertices...".format(self.num_vertices))
             outfile.write('*{} {}\n'.format(self.vertices_label, self.num_vertices))
-            ids_out = self.df_vertices
-            ids_out['node_name'] = ids_out['node_name'].astype(str)
-            ids_out['node_name'] = quotechar + ids_out['node_name'] + quotechar
-            ids_out[['node_id', 'node_name']].to_csv(outfile, sep=' ', index=False, header=False, quoting=QUOTE_NONE)
+            self.df_vertices['node_name'] = quotechar + self.df_vertices['node_name'] + quotechar
+            self.df_vertices[['node_id', 'node_name']].to_csv(outfile, sep=' ', index=False, header=False, quoting=QUOTE_NONE, line_terminator='\n')
 
+            logger.debug("writing {} edges...".format(self.num_edges))
             outfile.write('*{} {}\n'.format(self.edges_label, self.num_edges))
 
-            edges_out = self.df_edgelist
-            edges_out['citing_id'] = edges_out[self.citing_colname].map(self.id_map)
-            edges_out['cited_id'] = edges_out[self.cited_colname].map(self.id_map)
             outcols = ['citing_id', 'cited_id']
             if self.weighted:
                 outcols.append(self.weight_colname)
-            edges_out[outcols].to_csv(outfile, sep=' ', index=False, header=False)
+            self.df_edgelist[outcols].to_csv(outfile, sep=' ', index=False, header=False, quoting=QUOTE_NONE, line_terminator='\n')
 
         
 
