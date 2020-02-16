@@ -28,9 +28,9 @@ Tools for converting network data to pajek files.
 Installation
 ------------
 
-Install from pypi::
+Install from PyPI::
 
-    pip install pajek_tools
+    pip install pajek-tools
 
 
 Usage
