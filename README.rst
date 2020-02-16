@@ -2,10 +2,10 @@
 Pajek Tools
 ===========
 
-..
-        .. image:: https://img.shields.io/pypi/v/pajek_tools.svg
-                :target: https://pypi.python.org/pypi/pajek_tools
+.. image:: https://img.shields.io/pypi/v/pajek_tools.svg
+        :target: https://pypi.python.org/pypi/pajek_tools
 
+..
         .. image:: https://img.shields.io/travis/h1-the-swan/pajek_tools.svg
                 :target: https://travis-ci.com/h1-the-swan/pajek_tools
 
