@@ -24,8 +24,6 @@ Tools for converting network data to pajek files.
 .. _`Infomap`: https://www.mapequation.org/code.html
 
 
-* Free software: MIT license
-* Documentation: https://pajek-tools.readthedocs.io.
 
 Installation
 ------------
@@ -35,10 +33,22 @@ Install from pypi::
     pip install pajek_tools
 
 
-Features
---------
+Usage
+-----
 
-* TODO
+Use the ``PajekWriter`` object::
+
+        from pajek_tools import PajekWriter
+        writer = PajekWriter(dataframe)
+        writer.write("output.net")
+
+Example
+-------
+
+::
+
+        from pajek_tools import PajekWriter
+        import pandas as pd
 
 Credits
 -------
