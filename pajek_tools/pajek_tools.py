@@ -74,6 +74,8 @@ class PajekWriter:
 
         self.df_vertices = None
         self.id_map = None
+        
+        logger.debug("PajekWriter initialized")
 
     @property
     def df_edgelist(self):
