@@ -36,7 +36,7 @@ Install from PyPI::
 Usage
 -----
 
-Use the ``PajekWriter`` object::
+Use the ``PajekWriter`` object to convert a network from an edgelist in pandas DataFrame form, to a Pajek .net file::
 
         from pajek_tools import PajekWriter
         writer = PajekWriter(dataframe)
