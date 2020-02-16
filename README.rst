@@ -19,6 +19,7 @@ Pajek Tools
 Tools for converting network data to pajek files.
 
 `Pajek`_ is a file format for networks, typically stored in files with a ``.net`` extension. It is used as input for software such as `Infomap`_.
+
 .. _`Pajek`: http://mrvar.fdv.uni-lj.si/pajek/
 .. _`Infomap`: https://www.mapequation.org/code.html
 
