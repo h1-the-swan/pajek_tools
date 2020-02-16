@@ -50,6 +50,13 @@ Example
         from pajek_tools import PajekWriter
         import pandas as pd
 
+        df = pd.DataFrame([["a", "b"], ["a", "c"], ["c", "a"], ["c", "d"]], columns=["source", "target"])
+        writer = PajekWriter(df, 
+                             directed=True, 
+                             citing_colname="source", 
+                             cited_colname="target")
+        writer.write("output.net")
+
 Credits
 -------
 
