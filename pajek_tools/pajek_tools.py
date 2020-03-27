@@ -151,8 +151,8 @@ class PajekWriter:
             path to output file (will be overwritten if exists)
 
         """
-        if not self.id_map:
-            if not self.df_vertices:
+        if self.id_map is None:
+            if self.df_vertices is None:
                 self.df_vertices = self.get_df_vertices()
             self.id_map = self.get_id_map(self.df_vertices)
         self.df_edgelist['citing_id'] = self.df_edgelist[self.citing_colname].map(self.id_map)
