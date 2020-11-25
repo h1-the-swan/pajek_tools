@@ -225,7 +225,7 @@ class PajekWriter:
                         "memerr_edgelist_ckpt_pandas.pickle"
                     )
                     logger.debug("saving df_edgelist to {}".format(fpath_ckpt))
-                    self.df_edgelist[outcols].to_pickle(fpath_ckpt)
+                    self.df_edgelist.to_pickle(fpath_ckpt)
                 raise
 
 
