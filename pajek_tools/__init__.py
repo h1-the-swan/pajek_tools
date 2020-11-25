@@ -2,6 +2,6 @@
 
 __author__ = """Jason Portenoy"""
 __email__ = 'jason.portenoy@gmail.com'
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 from .pajek_tools import PajekWriter
