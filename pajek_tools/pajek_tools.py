@@ -2,7 +2,7 @@
 
 DESCRIPTION = """Pajek Tools"""
 
-import sys, os, time
+import sys, os, time, gc
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
@@ -161,7 +161,7 @@ class PajekWriter:
         self.id_map = df_vertices.set_index("node_name")["node_id"]
         return self.id_map
 
-    def write(self, outf, chunksize: int = 10000000):
+    def write(self, outf, chunksize: int = 10000000, on_err: Optional[str] = None):
         """Write the network to a Pajek (.net) file
 
         Parameters
@@ -205,15 +205,28 @@ class PajekWriter:
             outcols = ["citing_id", "cited_id"]
             if self.weighted:
                 outcols.append(self.weight_colname)
-            self.df_edgelist[outcols].to_csv(
-                outfile,
-                sep=" ",
-                index=False,
-                header=False,
-                quoting=QUOTE_NONE,
-                line_terminator="\n",
-                chunksize=chunksize,
-            )
+            try:
+                self.df_edgelist[outcols].to_csv(
+                    outfile,
+                    sep=" ",
+                    index=False,
+                    header=False,
+                    quoting=QUOTE_NONE,
+                    line_terminator="\n",
+                    chunksize=chunksize,
+                )
+            except MemoryError:
+                if on_err == "ckpt_and_raise":
+                    logger.debug(
+                        "MemoryError encountered. Attempting to save pickle before raising exception."
+                    )
+                    gc.collect()
+                    fpath_ckpt = outfpath.parent.joinpath(
+                        "memerr_edgelist_ckpt_pandas.pickle"
+                    )
+                    logger.debug("saving df_edgelist to {}".format(fpath_ckpt))
+                    self.df_edgelist[outcols].to_pickle(fpath_ckpt)
+                raise
 
 
 def main(args):
