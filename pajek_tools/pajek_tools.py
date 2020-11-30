@@ -45,6 +45,7 @@ class PajekWriter:
         citing_colname: str = "ID",
         cited_colname: str = "cited_ID",
         weight_colname: str = "weight",
+        dtype: str = "str",
     ):
         """
 
@@ -68,6 +69,8 @@ class PajekWriter:
             Column label for the cited node name
         weight_colname : `str`, default: "weight"
             Column label for the edge weight, if this is a weighted network
+        dtype: 'str', default: "str"
+            Data type for the citing/cited ID columns
 
         """
         self.df_edgelist = edgelist
@@ -84,9 +87,10 @@ class PajekWriter:
         self.citing_colname = citing_colname
         self.cited_colname = cited_colname
         self.weight_colname = weight_colname
+        self.dtype = dtype
 
-        self.df_edgelist[citing_colname] = self.df_edgelist[citing_colname].astype(str)
-        self.df_edgelist[cited_colname] = self.df_edgelist[cited_colname].astype(str)
+        self.df_edgelist[citing_colname] = self.df_edgelist[citing_colname].astype(self.dtype)
+        self.df_edgelist[cited_colname] = self.df_edgelist[cited_colname].astype(self.dtype)
 
         self.df_vertices = None
         self.id_map = None
@@ -140,7 +144,7 @@ class PajekWriter:
         x = np.unique(x)
         df_vertices = pd.DataFrame(x, columns=["node_name"])
         df_vertices["node_id"] = range(1, len(df_vertices) + 1)
-        df_vertices["node_name"] = df_vertices["node_name"].astype(str)
+        df_vertices["node_name"] = df_vertices["node_name"].astype(self.dtype)
         self.df_vertices = df_vertices
         return self.df_vertices
 
@@ -187,7 +191,7 @@ class PajekWriter:
             logger.debug("writing {} vertices...".format(self.num_vertices))
             outfile.write("*{} {}\n".format(self.vertices_label, self.num_vertices))
             self.df_vertices["node_name"] = (
-                quotechar + self.df_vertices["node_name"] + quotechar
+                quotechar + self.df_vertices["node_name"].astype(str) + quotechar
             )
             self.df_vertices[["node_id", "node_name"]].to_csv(
                 outfile,
