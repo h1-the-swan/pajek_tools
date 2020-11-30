@@ -49,6 +49,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/h1-the-swan/pajek_tools',
-    version='0.1.3',
+    version='0.1.4',
     zip_safe=False,
 )
