@@ -201,6 +201,7 @@ class PajekWriter:
                 quoting=QUOTE_NONE,
                 line_terminator="\n",
                 chunksize=chunksize,
+                escapechar="\\",
             )
 
             logger.debug("writing {} edges...".format(self.num_edges))
@@ -218,6 +219,7 @@ class PajekWriter:
                     quoting=QUOTE_NONE,
                     line_terminator="\n",
                     chunksize=chunksize,
+                    escapechar="\\",
                 )
             except MemoryError:
                 if on_err == "ckpt_and_raise":
